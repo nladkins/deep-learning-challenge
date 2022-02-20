@@ -1,12 +1,12 @@
 # deep-learning-challenge
  
-# Deep Learning Homework: Charity Funding Predictor
+# Deep Learning: Charity Funding Predictor
 
 ## Background
 
-The non-profit foundation Alphabet Soup wants to create an algorithm to predict whether or not applicants for funding will be successful. With your knowledge of machine learning and neural networks, you’ll use the features in the provided dataset to create a binary classifier that is capable of predicting whether applicants will be successful if funded by Alphabet Soup.
+The non-profit foundation Alphabet Soup wants to create an algorithm to predict whether or not applicants for funding will be successful. This project applies machine learning and neural network modeling to a provided dataset to create a binary classifier that is capable of predicting whether applicants will be successful if funded by Alphabet Soup.
 
-From Alphabet Soup’s business team, you have received a CSV containing more than 34,000 organizations that have received funding from Alphabet Soup over the years. Within this dataset are a number of columns that capture metadata about each organization, such as the following:
+This repository includes a CSV containing more than 34,000 organizations that have received funding from Alphabet Soup over the years. Within this dataset are a number of columns that capture metadata about each organization, such as the following:
 
 * **EIN** and **NAME**—Identification columns
 * **APPLICATION_TYPE**—Alphabet Soup application type
@@ -20,41 +20,55 @@ From Alphabet Soup’s business team, you have received a CSV containing more th
 * **ASK_AMT**—Funding amount requested
 * **IS_SUCCESSFUL**—Was the money used effectively
 
-## Instructions
+## Approach
 
-### Step 1: Preprocess the data
+### Preprocess the data
 
-Using your knowledge of Pandas and the Scikit-Learn’s `StandardScaler()`, you’ll need to preprocess the dataset in order to compile, train, and evaluate the neural network model later in Step 2
+The first step was to pre process the data. In this case, Pandas and Scikit-Learn’s `StandardScaler()` was used to preprocess the dataset in order to compile, train, and evaluate the neural network model.
 
-Using the information we have provided in the starter code, follow the instructions to complete the preprocessing steps.
+The following steps were performed to preprocess the data:
 
-1. Read in the charity_data.csv to a Pandas DataFrame, and be sure to identify the following in your dataset:
-  * What variable(s) are considered the target(s) for your model?
-  * What variable(s) are considered the feature(s) for your model?
-2. Drop the `EIN` and `NAME` columns.
-3. Determine the number of unique values for each column.
-4. For those columns that have more than 10 unique values, determine the number of data points for each unique value.
-6. Use the number of data points for each unique value to pick a cutoff point to bin "rare" categorical variables together in a new value, `Other`, and then check if the binning was successful.
-7. Use `pd.get_dummies()` to encode categorical variables
+    1. Read in the charity_data.csv to a Pandas DataFrame, and identified the following in the dataset:
+        * The variable that are considered the target for the model.
+        * What variable that are considered the feature for your model?
+    2. Dropped the `EIN` and `NAME` columns.
+    3. Determined the number of unique values for each column.
+    4. Used the number of data points for each unique value to pick a cutoff point to bin "rare" categorical variables together in a new value, `Other`, and then checked if the binning was successful.
+    7. Use `pd.get_dummies()` to encode categorical variables
 
-### Step 2: Compile, Train, and Evaluate the Model
+### Compile, Train, and Evaluate the Model
 
-Using your knowledge of TensorFlow, you’ll design a neural network, or deep learning model, to create a binary classification model that can predict if an Alphabet Soup–funded organization will be successful based on the features in the dataset. You’ll need to think about how many inputs there are before determining the number of neurons and layers in your model. Once you’ve completed that step, you’ll compile, train, and evaluate your binary classification model to calculate the model’s loss and accuracy.
+Using `TensorFlow`, I attempted to design a neural network, or deep learning model, to create a binary classification model that can predict if an Alphabet Soup–funded organization will be successful based on the features in the dataset. Because the goal was to see if a model could be developed that would exceed a 75% accuracy rating, Layers and units were applied a couple times to compile, train, and evaluate the binary classification model to calculate the model’s loss and accuracy.  The following items were completed:
 
-1. Continue using the jupter notebook where you’ve already performed the preprocessing steps from Step 1.
-2. Create a neural network model by assigning the number of input features and nodes for each layer using Tensorflow Keras.
-3. Create the first hidden layer and choose an appropriate activation function.
-4. If necessary, add a second hidden layer with an appropriate activation function.
-5. Create an output layer with an appropriate activation function.
-6. Check the structure of the model.
-7. Compile and train the model.
-8. Create a callback that saves the model's weights every 5 epochs.
-9. Evaluate the model using the test data to determine the loss and accuracy.
-10. Save and export your results to an HDF5 file, and name it `AlphabetSoupCharity.h5`.
+    1. Created a neural network model by assigning the number of input features and nodes for each layer using Tensorflow Keras.
+    2. Created the first hidden layer and chose an appropriate activation function.
+    3. Added a second hidden layer with an appropriate activation function.
+    4. Created an output layer with an appropriate activation function.
+    5. Checked the structure of the model.
+    6. Compiled and trained the model.
+    7. Evaluated the model using the test data to determine the loss and accuracy.
+    9. Saved and exported the results to an HDF5 file, and named it `AlphabetSoupCharity.h5`.
 
-### Step 3: Optimize the Model
+### Optimize the Model
 
-Using your knowledge of TensorFlow, optimize your model in order to achieve a target predictive accuracy higher than 75%. If you can't achieve an accuracy higher than 75%, you'll need to make at least three attempts to do so.
+A couple of attempts were made to optimize the model.  The first attempt:
+
+    `# Define the model - deep neural net, i.e., the number of input features and hidden nodes for each layer.`
+    `nn = tf.keras.models.Sequential()`
+
+    `# First hidden layer`
+    `nn.add(tf.keras.layers.Dense(units=32, activation="relu", input_dim=len(X_train[0])))`
+
+    `# Second hidden layer`
+    `nn.add(tf.keras.layers.Dense(units=16, activation="relu"))`
+
+    `# Output layer`
+    `nn.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))`
+
+    `# Check the structure of the model`
+    `nn.summary()`
+
+The layer parameters were adjusted (`units=`) to attemt to achieve a predictive accuracy higher than 75%. If you can't achieve an accuracy higher than 75%, you'll need to make at least three attempts to do so.
 
 Optimize your model in order to achieve a target predictive accuracy higher than 75% by using any or all of the following:
 
