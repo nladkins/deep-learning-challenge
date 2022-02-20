@@ -28,26 +28,26 @@ The first step was to pre process the data. In this case, Pandas and Scikit-Lear
 
 The following steps were performed to preprocess the data:
 
-    1. Read in the charity_data.csv to a Pandas DataFrame, and identified the following in the dataset:
-        * The variable that are considered the target for the model.
-        * What variable that are considered the feature for your model?
-    2. Dropped the `EIN` and `NAME` columns.
-    3. Determined the number of unique values for each column.
-    4. Used the number of data points for each unique value to pick a cutoff point to bin "rare" categorical variables together in a new value, `Other`, and then checked if the binning was successful.
-    7. Use `pd.get_dummies()` to encode categorical variables
+1. Read in the charity_data.csv to a Pandas DataFrame, and identified the following in the dataset:
+    * The variable that are considered the target for the model.
+    * What variable that are considered the feature for your model?
+2. Dropped the `EIN` and `NAME` columns.
+3. Determined the number of unique values for each column.
+4. Used the number of data points for each unique value to pick a cutoff point to bin "rare" categorical variables together in a new value, `Other`, and then checked if the binning was successful.
+7. Use `pd.get_dummies()` to encode categorical variables
 
 ### Compile, Train, and Evaluate the Model
 
 Using `TensorFlow`, I attempted to design a neural network, or deep learning model, to create a binary classification model that can predict if an Alphabet Soup–funded organization will be successful based on the features in the dataset. Because the goal was to see if a model could be developed that would exceed a 75% accuracy rating, Layers and units were applied a couple times to compile, train, and evaluate the binary classification model to calculate the model’s loss and accuracy.  The following items were completed:
 
-    1. Created a neural network model by assigning the number of input features and nodes for each layer using Tensorflow Keras.
-    2. Created the first hidden layer and chose an appropriate activation function.
-    3. Added a second hidden layer with an appropriate activation function.
-    4. Created an output layer with an appropriate activation function.
-    5. Checked the structure of the model.
-    6. Compiled and trained the model.
-    7. Evaluated the model using the test data to determine the loss and accuracy.
-    9. Saved and exported the results to an HDF5 file, and named it `AlphabetSoupCharity.h5`.
+1. Created a neural network model by assigning the number of input features and nodes for each layer using Tensorflow Keras.
+2. Created the first hidden layer and chose an appropriate activation function.
+3. Added a second hidden layer with an appropriate activation function.
+4. Created an output layer with an appropriate activation function.
+5. Checked the structure of the model.
+6. Compiled and trained the model.
+7. Evaluated the model using the test data to determine the loss and accuracy.
+9. Saved and exported the results to an HDF5 file, and named it `AlphabetSoupCharity.h5`.
 
 Here was the initial definition of the model which included two hidden layers with 32 neurons in the first layer and 16 neurons in the second layer:
 
@@ -68,8 +68,8 @@ Here was the initial definition of the model which included two hidden layers wi
 
 The model was compiled and fitted and returned the following result (saved as `AlphabetSoupCharity_Optimization.h5`):
 
-    8575/1 - 1s - loss: 0.5925 - accuracy: 0.7259
-    Loss: 0.5597062626246461, Accuracy: 0.7259474992752075
+    8575/1 - 1s - loss: 0.5847 - accuracy: 0.7261
+    Loss: 0.5566743094163455, Accuracy: 0.726064145565033
 
 ### Optimize the Model
 
@@ -96,10 +96,10 @@ The second attempt included two hidden layers with 75 neurons in the first layer
 
 Once the model was compiled and fitted, this was the result (saved as `reattempt1.h5`):
 
-    8575/1 - 1s - loss: 0.5881 - accuracy: 0.7263
-    Loss: 0.5615055516231859, Accuracy: 0.7262973785400391
+    8575/1 - 1s - loss: 0.5929 - accuracy: 0.7233
+    Loss: 0.5648308661588775, Accuracy: 0.7232652902603149
 
-This was a slight improvement, but very nominal.  
+There was a slight reduction in accuracy, but very nominal.  Let's further increase the neurons in another attempt.
 
 #### Third Attempt
 
@@ -122,10 +122,10 @@ A third attempt was peformed using the following code which increased the neuron
 
 Once the model was compiled and fitted, this was the result (saved as `reattempt2.h5`):
 
-    8575/1 - 1s - loss: 0.5871 - accuracy: 0.7277
-    Loss: 0.5619766884851038, Accuracy: 0.7276967763900757
+    8575/1 - 1s - loss: 0.5783 - accuracy: 0.7254
+    Loss: 0.5617579796362896, Accuracy: 0.7253644466400146
 
-As you can see, all attempts failed to achieve the 75% accuracy goal.
+This latest attempt is a nominal improvement compared to the last attempt, but still lower than the first attempt (albeit nominal).  All attempts to this point fail to achieve the 75% accuracy goal.  Perhaps the next step is to compare models and tune them to determine the most accurate.
 
 ### Kerastuner - tune and compare models
 
@@ -145,10 +145,27 @@ Because neither resulted in a 75% accuracy, `kerastuner` was used to create and 
 
 Result:
 
-    8575/1 - 1s - loss: 0.5939 - accuracy: 0.7279
-    Loss: 0.553262350795568, Accuracy: 0.7279300093650818
+    Trial 60 Complete [00h 02m 14s]
+    val_accuracy: 0.726064145565033
 
-The models used previously turned out to be the best model.  Although the model accuracy improved, it was still below the 75% accuracy goal.
+    Best val_accuracy So Far: 0.727580189704895
+    Total elapsed time: 00h 43m 46s
+    INFO:tensorflow:Oracle triggered exit
+
+Here is the code used to identify the top three models:
+
+    # Get top 3 model hyperparameters and print the values
+    top_hyper = tuner.get_best_hyperparameters(3)
+    for param in top_hyper:
+        print(param.values)
+
+Result:
+
+    {'activation': 'tanh', 'first_units': 11, 'num_layers': 3, 'units_0': 21, 'units_1': 11, 'units_2': 16, 'units_3': 26, 'units_4': 26, 'tuner/epochs': 20, 'tuner/initial_epoch': 7, 'tuner/bracket': 1, 'tuner/round': 1, 'tuner/trial_id': '34e23cc92e75bf7557a088b903f99241'}
+    {'activation': 'tanh', 'first_units': 6, 'num_layers': 1, 'units_0': 16, 'units_1': 26, 'units_2': 1, 'units_3': 11, 'units_4': 11, 'tuner/epochs': 20, 'tuner/initial_epoch': 7, 'tuner/bracket': 1, 'tuner/round': 1, 'tuner/trial_id': '7e06b285acf78b20cb6a9bccb5851a6a'}
+    {'activation': 'tanh', 'first_units': 11, 'num_layers': 3, 'units_0': 26, 'units_1': 6, 'units_2': 21, 'units_3': 6, 'units_4': 6, 'tuner/epochs': 20, 'tuner/initial_epoch': 0, 'tuner/bracket': 0, 'tuner/round': 0}
+
+The top three model parameters were using the "tanh" activation.  All three scores are higher than the previous scores to date.  HOWEVER, the difference is nominal and perhaps could be coincidental.  More importantly, all three of them fall below the 75% accuracy threshold being sought.  
 
 ## Conclusion
 
