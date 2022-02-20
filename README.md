@@ -49,37 +49,99 @@ Using `TensorFlow`, I attempted to design a neural network, or deep learning mod
     7. Evaluated the model using the test data to determine the loss and accuracy.
     9. Saved and exported the results to an HDF5 file, and named it `AlphabetSoupCharity.h5`.
 
+Here was the initial definition of the model which included two hidden layers with 32 neurons in the first layer and 16 neurons in the second layer:
+
+    # Define the model - deep neural net, i.e., the number of input features and hidden nodes for each layer.
+    nn = tf.keras.models.Sequential()
+
+    # First hidden layer
+    nn.add(tf.keras.layers.Dense(units=32, activation="relu", input_dim=len(X_train[0])))
+
+    # Second hidden layer
+    nn.add(tf.keras.layers.Dense(units=16, activation="relu"))
+
+    # Output layer
+    nn.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))
+
+    # Check the structure of the model
+    nn.summary()
+
+The model was compiled and fitted and returned the following result (saved as `AlphabetSoupCharity_Optimization.h5`):
+
+    8575/1 - 1s - loss: 0.5925 - accuracy: 0.7259
+    Loss: 0.5597062626246461, Accuracy: 0.7259474992752075
+
 ### Optimize the Model
 
-A couple of attempts were made to optimize the model.  The first attempt:
+A couple of attempts were made to optimize the model.  The layer parameters were adjusted (`units=`) to attemt to achieve a predictive accuracy higher than 75%. 
 
-    `# Define the model - deep neural net, i.e., the number of input features and hidden nodes for each layer.`
-    `nn = tf.keras.models.Sequential()`
+The first reattempt included two hidden layers with 75 neurons in the first layer and 25 neurons in the second layer:
 
-    `# First hidden layer`
-    `nn.add(tf.keras.layers.Dense(units=32, activation="relu", input_dim=len(X_train[0])))`
+    # Optimize the model in order to achieve a target predictive accuracy higher than 75% by adding more layers.
+    nn = tf.keras.models.Sequential()
 
-    `# Second hidden layer`
-    `nn.add(tf.keras.layers.Dense(units=16, activation="relu"))`
+    # First hidden layer
+    nn.add(tf.keras.layers.Dense(units=75, activation="relu", input_dim=len(X_train[0])))
 
-    `# Output layer`
-    `nn.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))`
+    # Second hidden layer
+    nn.add(tf.keras.layers.Dense(units=25, activation="relu"))
 
-    `# Check the structure of the model`
-    `nn.summary()`
+    # Output layer
+    nn.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))
 
-The layer parameters were adjusted (`units=`) to attemt to achieve a predictive accuracy higher than 75%. If you can't achieve an accuracy higher than 75%, you'll need to make at least three attempts to do so.
+    # Check the structure of the model
+    nn.summary()
 
-Optimize your model in order to achieve a target predictive accuracy higher than 75% by using any or all of the following:
+Once the model was compiled and fitted, this was the result (saved as `reattempt1.h5`):
 
-* Adjusting the input data to ensure that there are no variables or outliers that are causing confusion in the model, such as:
-  * Dropping more or fewer columns.
-  * Creating more bins for rare occurrences in columns.
-  * Increasing or decreasing the number of values for each bin.
-* Adding more neurons to a hidden layer.
-* Adding more hidden layers.
-* Using different activation functions for the hidden layers.
-* Adding or reducing the number of epochs to the training regimen.
+
+
+THis was a slight improvement, but very nominal.  
+
+A third attempt was peformed using the following code which increased the neurons in the first layer to 200 and to 150 neurons in the second layer:
+
+    # Optimize the model in order to achieve a target predictive accuracy higher than 75% by adding more layers.
+    nn = tf.keras.models.Sequential()
+
+    # First hidden layer
+    nn.add(tf.keras.layers.Dense(units=200, activation="relu", input_dim=len(X_train[0])))
+
+    # Second hidden layer
+    nn.add(tf.keras.layers.Dense(units=150, activation="relu"))
+
+    # Output layer
+    nn.add(tf.keras.layers.Dense(units=1, activation="sigmoid"))
+
+    # Check the structure of the model
+    nn.summary()
+
+Once the model was compiled and fitted, this was the result (saved as `reattempt2.h5`):
+
+
+
+As you can see, all attempts failed to achieve the 75% accuracy goal.
+
+### Tuning the Model
+
+Because neither resulted in a 75% accuracy, `kerastuner` was used to create and compile a new Sequential deep learning model with hyperparameter options with the following features
+
+    * Allowed `kerastuner` to select between `relu` and `tanh` activation functions for each hidden layer.
+    * Allowed `kerastuner` to decide from 1 to 30 neurons in the first dense layer.
+        * **Note:** To limit the tuner runtime, the *step* argument was increased to 5.
+    * Allowed `kerastuner` to decide from 1 to 5 hidden layers and 1 to 30 neurons in each dense layer.
+    * Created a **Hyperband** tuner instance using the following parameters:
+    * The *objective* is "val_accuracy"
+    * *max_epochs* equal to 20
+    * *hyperband_iterations* equal to two.
+    * Ran the `kerastuner` search for best hyperparameters over 20 epochs.
+    * Retrieved the top 3 model hyperparameters from the tuner search and print the values.
+    * Retrieved the top 3 models from the tuner search and compare their predictive accuracy against the test dataset.
+
+Result:
+
+
+
+The model used in the first place was actually the best model for this data set.  Therefore, the model does not acheive the target performance after three attempts under the best model.
 
 **NOTE**: You will not lose points if your model does not achieve target performance, as long as you make three attempts at optimizing the model in your jupyter notebook.
 
@@ -109,9 +171,3 @@ The report should contain the following:
     * What steps did you take to try and increase model performance?
 
 3. **Summary**: Summarize the overall results of the deep learning model. Include a recommendation for how a different model could solve this classification problem, and explain your recommendation.
-
-- - -
-
-## Rubric
-
-[Unit 21 - Deep Learning Homework Rubric - Charity Funding Predictor](https://docs.google.com/document/d/1SLOROX0lqZwa1ms-iRbHMQr1QSsMT2k0boO9YpFBnHA/edit?usp=sharing)
